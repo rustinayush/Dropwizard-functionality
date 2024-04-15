@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface EcommerceRepository {
 
-    List<EcommerceEntity> findAll(int offset,int limit);
+    List<EcommerceEntity> findAll(int offset,int limit,String sortBy,String sortOrder);
+
+    List<String> searchProduct(String attribute);
 
      Optional<EcommerceEntity> findById(String id);
 

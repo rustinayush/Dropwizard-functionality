@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.base.Charsets;
 import io.dropwizard.util.Resources;
 import org.example.modal.EcommerceEntity;
+import org.example.services.EcommerceService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,11 +31,17 @@ public class EcommerceRepositoryImpl implements EcommerceRepository{
         }
     }
 
-
 //    private final List<EcommerceEntity> entities=new ArrayList<>();
     @Override
-    public List<EcommerceEntity> findAll(int pageNumber,int pageSize) {
-        System.out.println(pageNumber+" "+pageSize);
+    public List<EcommerceEntity> findAll(int pageNumber,int pageSize,String sortBy,String sortOrder) {
+//        System.out.println(pageNumber+" "+pageSize);
+        List<EcommerceEntity> resultList= new ArrayList<>(entities);
+
+        if(sortBy!=null && !sortBy.isEmpty()){
+            Comparator<EcommerceEntity> comparator=getComparator(sortBy,sortOrder);
+            resultList.sort(comparator);
+        }
+
         if (pageNumber < 0 || pageSize <= 0) {
             throw new IllegalArgumentException("Invalid pagination parameters");
         }
@@ -43,10 +50,43 @@ public class EcommerceRepositoryImpl implements EcommerceRepository{
             return Collections.emptyList();
         }
         else{
-            return entities.subList(pageNumber,endIndex);
+            return resultList.subList(pageNumber,endIndex);
         }
-
     }
+
+    private Comparator<EcommerceEntity> getComparator(String sortBy,String sortOrder){
+        Comparator<EcommerceEntity> comparator= null;
+        switch(sortBy){
+            case "releaseYear":
+                comparator=Comparator.comparing(EcommerceEntity::getReleaseYear);
+                break;
+            case "episodeNumber":
+                comparator=Comparator.comparing(EcommerceEntity::getEpisodeNumber, Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+            case "seasonNumber":
+                comparator=Comparator.comparing(EcommerceEntity::getSeasonNumber, Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+
+                //can add more checks
+            default:
+                throw new IllegalArgumentException("Invalid field to sort by: " + sortBy);
+        }
+        if(sortOrder!=null && sortOrder.equalsIgnoreCase("desc")){
+            comparator=comparator.reversed();
+        }
+        return comparator;
+    }
+
+    public List<String> searchProduct(String attribute){
+        List<String> result=new ArrayList<>();
+        for(EcommerceEntity entity: entities){
+            if(entity.getName() !=null && entity.getShowName().equalsIgnoreCase(attribute)){
+                result.add(entity.getId());
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public Optional<EcommerceEntity> findById(String id) {

@@ -24,8 +24,11 @@ public class ShoppingResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<EcommerceEntity> getAllProducts(@QueryParam("pageNumber") @DefaultValue("0") int pageNumber,
-                                                @QueryParam("pageSize") @DefaultValue("10") int pageSize){
-        return ecommerceService.getAllProducts(pageNumber,pageSize);
+                                                @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+                                                @QueryParam("sortBy") String sortBy,
+                                                @QueryParam("sortOrder") @DefaultValue("asc") String sortOrder
+                                                ){
+        return ecommerceService.getAllProducts(pageNumber,pageSize,sortBy,sortOrder);
     }
 
     @GET
@@ -67,4 +70,12 @@ public class ShoppingResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+
+    @GET
+    @Path("/search/{attribute}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> filterProducts(@PathParam("attribute") String attributeValue){
+            return ecommerceService.filterProducts(attributeValue);
+    }
+
 }

@@ -5,6 +5,7 @@ import org.example.modal.EcommerceEntity;
 import org.example.repository.EcommerceRepository;
 import org.example.repository.EcommerceRepositoryImpl;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +16,12 @@ public class EcommerceService {
         this.ecommerceRepository = new EcommerceRepositoryImpl();
     }
 
-    public List<EcommerceEntity> getAllProducts(int pageNumber,int pageSize){
-        return ecommerceRepository.findAll(pageNumber,pageSize);
+    public List<EcommerceEntity> getAllProducts(int pageNumber,int pageSize,String sortBy,String sortOrder){
+        return ecommerceRepository.findAll(pageNumber,pageSize,sortBy,sortOrder);
+    }
+
+    public List<String> filterProducts(String attribute){
+        return ecommerceRepository.searchProduct(attribute);
     }
 
     public EcommerceEntity getProductById(String id){
@@ -37,4 +42,5 @@ public class EcommerceService {
         ecommerceRepository.delete(id);
         return true;  //when successfully deleted
     }
+
 }
