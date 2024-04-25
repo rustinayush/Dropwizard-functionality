@@ -20,7 +20,7 @@ public class EcommerceService {
         return ecommerceRepository.findAll(pageNumber,pageSize,sortBy,sortOrder);
     }
 
-    public List<String> filterProducts(String attribute){
+    public List<EcommerceEntity> filterProducts(String attribute){
         return ecommerceRepository.searchProduct(attribute);
     }
 

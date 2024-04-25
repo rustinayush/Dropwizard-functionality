@@ -9,7 +9,7 @@ public interface EcommerceRepository {
 
     List<EcommerceEntity> findAll(int offset,int limit,String sortBy,String sortOrder);
 
-    List<String> searchProduct(String attribute);
+    List<EcommerceEntity> searchProduct(String attribute);
 
      Optional<EcommerceEntity> findById(String id);
 
