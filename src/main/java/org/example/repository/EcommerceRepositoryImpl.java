@@ -106,14 +106,43 @@ public class EcommerceRepositoryImpl implements EcommerceRepository{
 
     public List<EcommerceEntity> searchProduct(String attribute){
         List<EcommerceEntity> result=new ArrayList<>();
-        for(EcommerceEntity entity: entities.values()){
-            if(entity.getName() !=null && entity.getShowName().equalsIgnoreCase(attribute)){
-                result.add(entity);
+
+        try {
+
+            for (EcommerceEntity entity : entities.values()) {
+
+                for(Field field : EcommerceEntity.class.getDeclaredFields()){
+
+                     field.setAccessible(true);
+                    System.out.println(field);
+                     Object FieldValue = field.get(entity);
+
+
+                if (FieldValue != null && FieldValue.toString().equalsIgnoreCase(attribute)) {
+                    result.add(entity);
+                }
             }
+           }
+        } catch (IllegalAccessException e){
+            e.printStackTrace();
+            throw new RuntimeException("Error accessing field: " + attribute, e);
         }
+
         return result;
     }
 
+
+    // --------------> Old search functionality not generic (Harcoded Search)------------------>
+
+//    public List<EcommerceEntity> searchProduct(String attribute){
+//        List<EcommerceEntity> result=new ArrayList<>();
+//        for(EcommerceEntity entity: entities.values()){
+//            if(entity.getName() !=null && entity.getShowName().equalsIgnoreCase(attribute)){
+//                result.add(entity);
+//            }
+//        }
+//        return result;
+//    }
 
     @Override
     public Optional<EcommerceEntity> findById(String id) {
